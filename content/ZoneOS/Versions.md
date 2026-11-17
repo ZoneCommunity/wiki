@@ -14,7 +14,7 @@ click a version to open its page, at `wiki.pptos.net/ZoneOS/<Version>`.
 | --- | --- | --- |
 | [Levynite](/ZoneOS/Levynite/) | ZoneCore | Merged into ZoneOS+ |
 | [ZoneOS+](/ZoneOS/ZoneOS-Plus/) | ZoneCore | Became Mesolite again |
-| [Mesolite](/ZoneOS/Mesolite/) | ZoneCore | Current branch |
+| [Mesolite](/ZoneOS/Mesolite/) | ZoneCore | Current version |
 
 ## Notes
 

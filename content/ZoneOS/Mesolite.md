@@ -12,7 +12,7 @@ description: Mesolite is the longest developed ZoneOS version, with the most fea
 
 # Mesolite
 
-**Mesolite** is the latest edition of ZoneOS, running the ZoneCore core.
+**Mesolite** is the latest version of ZoneOS, running the ZoneCore core.
 It is the longest developed ZoneOS version, with the most
 features.
 

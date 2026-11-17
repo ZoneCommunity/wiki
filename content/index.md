@@ -24,7 +24,7 @@ core.
 ## Browse
 
 - [ZoneOS](/ZoneOS/) - the main ZoneOS article
-- [All versions](/ZoneOS/Versions/) - every ZoneOS version, in order, each with its own article
+- [zeqOS](/zeqOS/) - the main zeqOS article
 
 ## How this wiki works
 

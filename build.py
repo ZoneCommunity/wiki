@@ -86,6 +86,7 @@ def parse_markdown(md):
     code_lang = ""
     code_buf = []
     in_table = False
+    in_section = False
 
     def close_table():
         nonlocal in_table
@@ -99,15 +100,31 @@ def parse_markdown(md):
         # Fenced code blocks.
         if line.strip().startswith("```"):
             if in_code:
-                out.append("<pre><code>%s</code></pre>" % html.escape("\n".join(code_buf)))
+                pre_html = "<pre><code>%s</code></pre>" % html.escape("\n".join(code_buf))
                 code_buf = []
                 in_code = False
+                # A code block directly followed by an image sits
+                # beside it, instead of stacking above it.
+                j = i + 1
+                while j < len(lines) and not lines[j].strip():
+                    j += 1
+                if j < len(lines) and re.match(r"^!\[.*\]\(.*\)\s*$", lines[j].strip()):
+                    img_line = lines[j].strip()
+                    img_html = parse_inline(img_line)
+                    alt = re.match(r"^!\[([^\]]*)\]", img_line).group(1)
+                    caption = "<figcaption>%s</figcaption>" % html.escape(alt) if alt else ""
+                    out.append('<div class="media-row">%s<figure>%s%s</figure></div>' % (pre_html, img_html, caption))
+                    plain.append(alt)
+                    i = j + 1
+                else:
+                    out.append(pre_html)
+                    i += 1
             else:
                 close_table()
                 in_code = True
                 code_lang = line.strip()[3:].strip()
                 code_buf = []
-            i += 1
+                i += 1
             continue
         if in_code:
             code_buf.append(line)
@@ -133,6 +150,14 @@ def parse_markdown(md):
                 i += 1
                 continue
             headings.append((level, text, hid))
+            # h2 starts a new section, so its figures stay inside it
+            # instead of spilling down beside the next section. h3
+            # stays inside the current section.
+            if level == 2:
+                if in_section:
+                    out.append("</section>")
+                out.append("<section>")
+                in_section = True
             out.append('<h%d id="%s">%s</h2>' % (level, hid, parse_inline(text)) if level == 2 else '<h%d id="%s">%s</h%d>' % (level, hid, parse_inline(text), level))
             plain.append(text)
             i += 1
@@ -195,13 +220,42 @@ def parse_markdown(md):
             continue
 
         # Images on their own line become a figure, so they get a caption.
+        # A video file (.mp4, .webm) uses the same syntax and becomes a
+        # <video> player inside the figure instead.
+        # Consecutive images (blank lines allowed between them) become
+        # a row of figures side by side instead of stacking.
         if re.match(r"^!\[.*\]\(.*\)\s*$", stripped):
-            img_html = parse_inline(stripped)
-            alt = re.match(r"^!\[([^\]]*)\]", stripped).group(1)
-            caption = "<figcaption>%s</figcaption>" % html.escape(alt) if alt else ""
-            out.append("<figure>%s%s</figure>" % (img_html, caption))
-            plain.append(alt)
-            i += 1
+            imgs = [stripped]
+            j = i + 1
+            while True:
+                k = j
+                while k < len(lines) and not lines[k].strip():
+                    k += 1
+                if k < len(lines) and re.match(r"^!\[.*\]\(.*\)\s*$", lines[k].strip()):
+                    imgs.append(lines[k].strip())
+                    j = k + 1
+                else:
+                    break
+            figs = []
+            for s in imgs:
+                alt = re.match(r"^!\[([^\]]*)\]", s).group(1)
+                src = re.match(r"^!\[[^\]]*\]\(([^)]*)\)$", s).group(1)
+                if src.lower().endswith((".mp4", ".webm")):
+                    # preload="auto" so the whole video is buffered: seeking
+                    # needs byte-range requests, and not every static server
+                    # supports them, so a metadata-only preload leaves the
+                    # timeline unseekable until the file has played through.
+                    media_html = '<video controls preload="auto" src="%s"></video>' % html.escape(src)
+                else:
+                    media_html = parse_inline(s)
+                caption = "<figcaption>%s</figcaption>" % html.escape(alt) if alt else ""
+                figs.append("<figure>%s%s</figure>" % (media_html, caption))
+                plain.append(alt)
+            if len(figs) > 1:
+                out.append('<div class="figure-row">%s</div>' % "".join(figs))
+            else:
+                out.append(figs[0])
+            i = j
             continue
 
         # Paragraph: gather consecutive non-blank lines.
@@ -219,6 +273,8 @@ def parse_markdown(md):
             i += 1
 
     close_table()
+    if in_section:
+        out.append("</section>")
     return "\n".join(out), headings, " ".join(plain)
 
 
@@ -266,17 +322,28 @@ def render_infobox(fm, lookup):
         ("initial_release", "Initial release", False),
         ("latest_release", "Latest release", False),
         ("latest_preview", "Latest preview", False),
+        ("latest_development", "Latest development", False),
         ("latest_build", "Latest build", False),
-        ("current_branch", "Current branch", True),
+        ("current_branch", "Current version", True),
         ("current_core", "Current core", True),
         ("longest_developed", "Longest developed", True),
         ("languages", "Languages", False),
     ]
     cells = []
-    image = fm.get("image")
-    if image:
+    # images is a comma-separated list, so a page can stack several
+    # pictures in the infobox. image still works for a single one.
+    # image_captions is a semicolon-separated list in the same order,
+    # one caption under each image (semicolons, because captions
+    # themselves can contain commas).
+    images = [s.strip() for s in fm.get("images", "").split(",") if s.strip()]
+    if not images and fm.get("image"):
+        images = [fm["image"]]
+    captions = [s.strip() for s in fm.get("image_captions", "").split(";") if s.strip()]
+    for i, src in enumerate(images):
         cells.append('<tr><td class="infobox-image" colspan="2"><img src="%s" alt="%s"></td></tr>' % (
-            html.escape(image, quote=True), html.escape(fm.get("title", ""), quote=True)))
+            html.escape(src, quote=True), html.escape(fm.get("title", ""), quote=True)))
+        if i < len(captions):
+            cells.append('<tr><td class="infobox-caption" colspan="2">%s</td></tr>' % html.escape(captions[i]))
     for key, label, is_version in rows:
         if key not in fm:
             continue

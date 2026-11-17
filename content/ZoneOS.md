@@ -24,7 +24,7 @@ ZoneOS is a long-running project with many versions. The version
 order is Culebra, Malachite, Tanzanite, Plexorite, Levynite,
 ZoneOS+, and Mesolite.
 
-The current branch is [Mesolite](/ZoneOS/Mesolite/), which also has
+The current version is [Mesolite](/ZoneOS/Mesolite/), which also has
 the most features. Mesolite is the most advanced version of ZoneOS
 to date, utilizing various different techniques to provide the
 most realistic PPTOS experience possible.

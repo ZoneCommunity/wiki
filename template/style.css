@@ -150,9 +150,22 @@ body[data-color="dark"] .logo-light { display: block; }
 .article-body table { border-collapse: collapse; margin: 12px 0 18px; width: 100%; font-size: 14px; }
 .article-body th, .article-body td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
 .article-body th { background: var(--panel); }
-.article-body figure { margin: 12px 0 18px; }
+/* Figures float on the right like Wikipedia thumbs, with the text
+   wrapping around them, instead of sitting full-width in the flow. */
+.article-body figure { float: right; clear: right; width: 300px; max-width: 100%; margin: 0 0 16px 20px; border: 1px solid var(--border); background: var(--panel); padding: 6px; }
 .article-body figure img { cursor: zoom-in; display: block; max-width: 100%; height: auto; }
-.article-body figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.article-body figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; padding: 0 2px 2px; }
+/* A section holding figures grows to contain them, so the pictures
+   sit inside their own section on the right instead of spilling
+   down beside the next section. Only sections with figures get
+   this, the rest keep flowing beside the infobox. */
+.article-body section:has(figure)::after { content: ""; display: block; clear: both; }
+/* Rows: consecutive figures, or a code block beside a figure, sit
+   side by side instead of stacking. */
+.article-body .figure-row, .article-body .media-row { display: flex; gap: 16px; align-items: flex-start; margin: 0 0 16px; }
+.article-body .figure-row figure, .article-body .media-row figure { float: none; width: auto; flex: 1 1 0; min-width: 0; margin: 0; }
+.article-body .media-row pre { flex: 1 1 0; min-width: 0; margin: 0; }
+.article-body figure video { width: 100%; display: block; background: #000; }
 
 /* Infobox. The selector must beat `.article-body table` (width: 100%),
    which otherwise wins on specificity and stretches the infobox to
@@ -165,6 +178,7 @@ body[data-color="dark"] .logo-light { display: block; }
 .infobox img { width: 100%; display: block; }
 .infobox .infobox-image { padding: 0; }
 .infobox .infobox-image img { cursor: zoom-in; }
+.infobox td.infobox-caption { text-align: center; font-size: 13px; color: var(--muted); }
 .badge { display: inline-block; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 1px 10px; font-size: 13px; margin: 2px 2px 2px 0; }
 .article-foot { border-top: 1px solid var(--border-light); margin-top: 32px; padding-top: 12px; color: var(--muted); font-size: 13px; }
 
@@ -216,6 +230,13 @@ body[data-color="dark"] .logo-light { display: block; }
      survived on mobile and the lead text squeezed into a narrow
      column beside it. On mobile the infobox is full width. */
   .article-body table.infobox { float: none; width: 100%; margin: 0 0 16px; }
+  /* Figures un-float on mobile: a 300px float would squeeze the
+     text into a narrow column, so they go full width again. */
+  .article-body figure { float: none; width: 100%; margin: 12px 0 18px; }
+  /* Rows stack vertically on mobile, so each figure and code block
+     gets the full width again. */
+  .article-body .figure-row, .article-body .media-row { flex-direction: column; }
+  .article-body .figure-row figure, .article-body .media-row figure, .article-body .media-row pre { flex: none; width: 100%; }
   /* Below 640px the topbar wraps to two rows, so the floating
      panels sit lower to clear the search row. */
   body.show-contents .contents-col, body.show-appearance .appearance-col { top: 120px; max-height: calc(100vh - 140px); }
