@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} - PPTOS Wiki</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="icon" href="/assets/wiki/favicon.png">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="menu-btn" id="contentsToggle" aria-label="Toggle contents">&#9776;</button>
+    <a class="wordmark" href="/" aria-label="PPTOS Wiki home"><img class="wordmark-logo logo-dark" src="/assets/wiki/dark.svg" alt="PPTOS Wiki"><img class="wordmark-logo logo-light" src="/assets/wiki/light.svg" alt="PPTOS Wiki"></a>
+    <div class="search" role="search">
+      <input id="searchInput" type="search" placeholder="Search PPTOS Wiki" autocomplete="off" aria-label="Search PPTOS Wiki">
+      <button type="button" id="searchButton">Search</button>
+      <div class="search-results" id="searchResults" hidden></div>
+    </div>
+    <button class="appearance-btn" id="appearanceToggle" aria-label="Toggle appearance">Appearance</button>
+  </div>
+</header>
+
+<div class="page">
+  <aside class="contents-col" id="contentsCol">
+    <div class="contents-box">
+      <div class="contents-head">
+        <span>Contents</span>
+      </div>
+      {{CONTENTS}}
+    </div>
+  </aside>
+
+  <main class="article-col">
+    <div class="breadcrumb">{{BREADCRUMB}}</div>
+    <h1 class="article-title">{{TITLE}}</h1>
+    <div class="tabs">
+      <div class="tabs-left">
+        {{ARTICLE_TAB}}
+        {{ALL_VERSIONS_TAB}}
+      </div>
+      <div class="tabs-right">
+        <span class="tab active">Read</span>
+        <a class="tab" href="{{EDIT_URL}}">Edit</a>
+        <a class="tab" href="{{HISTORY_URL}}">View history</a>
+      </div>
+    </div>
+    <article class="article-body">
+      {{INFOBOX}}
+      {{CONTENT}}
+    </article>
+    <footer class="article-foot">
+      <p>This page is part of the PPTOS Wiki. To change it, edit its Markdown file and open a pull request on GitHub.</p>
+      <p><a href="{{EDIT_URL}}">Edit this page</a> &middot; <a href="{{HISTORY_URL}}">View history</a></p>
+    </footer>
+  </main>
+
+  <aside class="appearance-col" id="appearanceCol">
+    <div class="appearance-box">
+      <div class="appearance-head">
+        <span>Appearance</span>
+      </div>
+      <div class="appearance-group">
+        <h3>Text</h3>
+        <label><input type="radio" name="text-size" value="small"> Small</label>
+        <label><input type="radio" name="text-size" value="standard" checked> Standard</label>
+        <label><input type="radio" name="text-size" value="large"> Large</label>
+      </div>
+      <div class="appearance-group">
+        <h3>Width</h3>
+        <label><input type="radio" name="width" value="standard" checked> Standard</label>
+        <label><input type="radio" name="width" value="wide"> Wide</label>
+      </div>
+      <div class="appearance-group">
+        <h3>Color</h3>
+        <label><input type="radio" name="color" value="automatic" checked> Automatic</label>
+        <label><input type="radio" name="color" value="light"> Light</label>
+        <label><input type="radio" name="color" value="dark"> Dark</label>
+      </div>
+      <p class="appearance-note">Appearance settings are only saved in this browser session.</p>
+    </div>
+  </aside>
+</div>
+
+<div class="media-viewer" id="mediaViewer" hidden role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button type="button" class="viewer-close" id="viewerClose" aria-label="Close">&times;</button>
+  <button type="button" class="viewer-nav viewer-prev" id="viewerPrev" aria-label="Previous image">&#8249;</button>
+  <figure class="viewer-figure">
+    <img id="viewerImage" src="" alt="">
+    <figcaption id="viewerCaption"></figcaption>
+    <div class="viewer-info" id="viewerInfo"></div>
+  </figure>
+  <button type="button" class="viewer-nav viewer-next" id="viewerNext" aria-label="Next image">&#8250;</button>
+</div>
+
+<script src="/assets/script.js"></script>
+</body>
+</html>
