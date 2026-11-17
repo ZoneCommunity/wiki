@@ -19,7 +19,7 @@ features.
 ## Overview
 
 Mesolite features a comprehensive list of application features
-that exist
+that exist.
 
 Underneath it is the Surface System, which is ZoneOS's class-based
 VBA UI toolkit for creating ZoneOS applications. It also comes with
