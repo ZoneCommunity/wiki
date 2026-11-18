@@ -1,4 +1,4 @@
-# PPTOS Wiki
+# PowerPoint OS Wiki
 
 PowerPoint OS Network's official encyclopedia for any and all PPTOSes.
 Live site: **https://wiki.pptos.net**

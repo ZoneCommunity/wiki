@@ -3,28 +3,25 @@ title: Home
 description: The wiki for PPTOSes.
 ---
 
-# PPTOS Wiki
+# PowerPoint OS Wiki
 
-Welcome to the PPTOS Wiki, the PowerPoint OS Network's official
+Welcome to the PowerPoint OS Wiki, the PowerPoint OS Network's official
 encyclopedia for any and all PPTOSes.
 
-A PowerPoint OS, colloquially refered to as a "PPTOS", is a simulated desktop environment that runs inside a
+A PowerPoint OS, colloquially referred to as a "PPTOS", is a simulated desktop environment that runs inside a
 PowerPoint slideshow. They replicate real operating systems
 through the usage of VBA (Visual Basic for Applications) which
-is build into Microsoft Office.
+is built into Microsoft Office.
 
 ## Featured article
 
-[ZoneOS](/ZoneOS/) is a PPTOS written in
-PowerPoint VBA, by ZoneCommunity.
-
-The current branch is [Mesolite](/ZoneOS/Mesolite/), with the ZoneCore
-core.
+[Presentasia OS](/Presentasia_OS/) is a PPTOS written in
+PowerPoint VBA, by Presentasia Technologies.
 
 ## Browse
 
-- [ZoneOS](/ZoneOS/) - the main ZoneOS article
-- [zeqOS](/zeqOS/) - the main zeqOS article
+- [All PPTOSes](/PPTOSes/) - every PPTOS on the wiki
+- [Creators](/Creators/) - a list of different PPTOS creators
 
 ## How this wiki works
 

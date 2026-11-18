@@ -1,5 +1,6 @@
 ---
 title: zeqOS Makalu
+succeeded_by: zeqOS Culebra
 description: The first version of zeqOS, released to the public.
 latest_build: RTM
 image: /assets/zeqOS/Makalu/Desktop.png

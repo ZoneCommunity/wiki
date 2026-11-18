@@ -1,5 +1,6 @@
 ---
 title: zeqOS Barrerite
+preceded_by: zeqOS Chabazite
 core: ZT2 (Zento 2)
 status: Never released
 image: /assets/zeqOS/Barrerite/Home.png

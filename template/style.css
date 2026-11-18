@@ -56,8 +56,8 @@ a:hover { text-decoration: underline; }
 a:visited { color: var(--link-visited); }
 img { max-width: 100%; height: auto; }
 
-/* Top bar */
-.topbar { border-bottom: 1px solid var(--header-border); background: var(--bg); position: sticky; top: 0; z-index: 20; }
+/* Top bar - not sticky: it scrolls away with the page, like Wikipedia */
+.topbar { border-bottom: 1px solid var(--header-border); background: var(--bg); }
 .topbar-inner { max-width: 1400px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 16px; }
 .menu-btn { display: none; background: none; border: 1px solid var(--border-light); border-radius: 4px; font-size: 18px; padding: 2px 10px; cursor: pointer; color: var(--text); }
 .appearance-btn { display: none; background: none; border: 1px solid var(--border-light); border-radius: 4px; font-size: 14px; padding: 5px 12px; cursor: pointer; color: var(--text); margin-left: auto; }
@@ -83,7 +83,9 @@ body[data-color="dark"] .logo-light { display: block; }
 /* Three-column page with article centered */
 .page { display: grid; grid-template-columns: 200px minmax(0, var(--article-width)) 200px; justify-content: center; gap: 32px; max-width: calc(var(--article-width) + 504px); margin: 0 auto; padding: 24px 20px 60px; }
 .contents-col, .appearance-col { font-size: 14px; }
-.contents-box, .appearance-box { position: sticky; top: 70px; }
+/* The side columns still stick while scrolling, but near the top of the
+   viewport now that there is no sticky header to clear */
+.contents-box, .appearance-box { position: sticky; top: 16px; }
 .contents-head, .appearance-head { border-bottom: 1px solid var(--border-light); padding-bottom: 6px; margin-bottom: 10px; font-weight: bold; }
 .contents-box ul { list-style: none; margin: 0; padding: 0; }
 .contents-box li { margin: 4px 0; }
@@ -144,11 +146,15 @@ body[data-color="dark"] .logo-light { display: block; }
 .article-body figure img { cursor: zoom-in; display: block; max-width: 100%; height: auto; }
 .article-body figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; padding: 0 2px 2px; }
 .article-body section:has(figure)::after { content: ""; display: block; clear: both; }
+/* A section with a table stays in the text column next to a floated
+   infobox, instead of the table stretching the full article width. */
+.article-body section:has(table) { display: flow-root; }
 /* Rows */
 .article-body .figure-row, .article-body .media-row { display: flex; gap: 16px; align-items: flex-start; margin: 0 0 16px; }
 .article-body .figure-row figure, .article-body .media-row figure { float: none; width: auto; flex: 1 1 0; min-width: 0; margin: 0; }
 .article-body .media-row pre { flex: 1 1 0; min-width: 0; margin: 0; }
-.article-body figure video { width: 100%; display: block; background: #000; }
+/* Lock the ratio so the box is 16:9 from the first paint, and auto lets real ratio win once its metadata loads */
+.article-body figure video { width: 100%; aspect-ratio: auto 16 / 9; display: block; background: #000; }
 
 /* Infobox */
 .article-body table.infobox { float: right; clear: right; width: 300px; max-width: 100%; margin: 0 0 16px 20px; border: 1px solid var(--border); background: var(--panel); font-size: 14px; }

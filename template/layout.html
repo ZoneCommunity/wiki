@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{TITLE}} - PPTOS Wiki</title>
+<title>{{TITLE}} - {{SITE_NAME}}</title>
 <meta name="description" content="{{DESCRIPTION}}">
 <link rel="stylesheet" href="/assets/style.css">
 <link rel="icon" href="/assets/wiki/favicon.png">
@@ -12,9 +12,9 @@
 <header class="topbar">
   <div class="topbar-inner">
     <button class="menu-btn" id="contentsToggle" aria-label="Toggle contents">&#9776;</button>
-    <a class="wordmark" href="/" aria-label="PPTOS Wiki home"><img class="wordmark-logo logo-dark" src="/assets/wiki/dark.svg" alt="PPTOS Wiki"><img class="wordmark-logo logo-light" src="/assets/wiki/light.svg" alt="PPTOS Wiki"></a>
+    <a class="wordmark" href="/" aria-label="{{SITE_NAME}} home"><img class="wordmark-logo logo-dark" src="/assets/wiki/dark.svg" alt="{{SITE_NAME}}"><img class="wordmark-logo logo-light" src="/assets/wiki/light.svg" alt="{{SITE_NAME}}"></a>
     <div class="search" role="search">
-      <input id="searchInput" type="search" placeholder="Search PPTOS Wiki" autocomplete="off" aria-label="Search PPTOS Wiki">
+      <input id="searchInput" type="search" placeholder="Search {{SITE_NAME}}" autocomplete="off" aria-label="Search {{SITE_NAME}}">
       <button type="button" id="searchButton">Search</button>
       <div class="search-results" id="searchResults" hidden></div>
     </div>
@@ -51,7 +51,7 @@
       {{CONTENT}}
     </article>
     <footer class="article-foot">
-      <p>This page is part of the PPTOS Wiki. To change it, edit its Markdown file and open a pull request on GitHub.</p>
+      <p>This page is part of the {{SITE_NAME}}. To change it, edit its Markdown file and open a pull request on GitHub.</p>
       <p><a href="{{EDIT_URL}}">Edit this page</a> &middot; <a href="{{HISTORY_URL}}">View history</a></p>
     </footer>
   </main>

@@ -1,5 +1,7 @@
 ---
 title: zeqOS Natrolite
+preceded_by: zeqOS Fluorite
+succeeded_by: zeqOS Rhodonite
 description: One of the first PPTOSes with movable windows using ActiveX elements.
 source_model: Open source
 latest_build: Build34_B01_SP14

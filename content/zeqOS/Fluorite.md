@@ -1,5 +1,7 @@
 ---
 title: zeqOS Fluorite
+preceded_by: zeqOS Culebra
+succeeded_by: zeqOS Natrolite
 images: /assets/zeqOS/Fluorite/Home.png, /assets/zeqOS/Fluorite/Calculator.png
 image_captions: zeqOS Fluorite home screen; The Calculator app open on the desktop
 description: The first known version of zeqOS to create applications fully in VBA.

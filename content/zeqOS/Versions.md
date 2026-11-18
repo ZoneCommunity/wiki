@@ -1,11 +1,12 @@
 ---
 title: All versions
-description: Every zeqOS version, in order, each with its own article.
+description: Every zeqOS version, in order.
 ---
 
 # All versions
 
-Every zeqOS version, in order. Each version is its own article - click a version to open its page, at `wiki.pptos.net/zeqOS/<Version>`.
+Every zeqOS version, in order.
+Click a version to open its page, at `wiki.pptos.net/zeqOS/<Version>`.
 
 ## Versions
 

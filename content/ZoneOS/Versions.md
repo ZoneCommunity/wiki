@@ -1,12 +1,12 @@
 ---
 title: All versions
-description: Every ZoneOS version, in order, each with its own article.
+description: Every ZoneOS version, in order.
 ---
 
 # All versions
 
-Every ZoneOS version, in order. Each version is its own article -
-click a version to open its page, at `wiki.pptos.net/ZoneOS/<Version>`.
+Every ZoneOS version, in order.
+Click a version to open its page, at `wiki.pptos.net/ZoneOS/<Version>`.
 
 ## Versions
 
@@ -18,5 +18,4 @@ click a version to open its page, at `wiki.pptos.net/ZoneOS/<Version>`.
 
 ## Notes
 
-- [Mesolite](/ZoneOS/Mesolite/) is the longest developed version of ZoneOS,
-  with the most features.
+- [Mesolite](/ZoneOS/Mesolite/) is the longest developed version of ZoneOS, with the most features.

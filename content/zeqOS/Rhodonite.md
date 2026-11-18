@@ -1,5 +1,7 @@
 ---
 title: zeqOS Rhodonite
+preceded_by: zeqOS Natrolite
+succeeded_by: zeqOS Chabazite
 description: A canceled version of zeqOS, reset into Chabazite.
 core: NT
 image: /assets/zeqOS/Rhodonite/Desktop.png

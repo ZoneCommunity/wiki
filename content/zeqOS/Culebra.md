@@ -1,5 +1,7 @@
 ---
 title: zeqOS Culebra
+preceded_by: zeqOS Makalu
+succeeded_by: zeqOS Fluorite
 description: A version of zeqOS, newer than Makalu and older than Fluorite.
 image: /assets/zeqOS/Culebra/Desktop.png
 image_captions: The zeqOS Culebra desktop

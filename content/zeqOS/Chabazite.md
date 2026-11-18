@@ -1,5 +1,6 @@
 ---
 title: zeqOS Chabazite
+preceded_by: zeqOS Rhodonite
 description: The latest version of zeqOS, named after the mineral.
 core: Zento
 status: End-of-life (EOL)

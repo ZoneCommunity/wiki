@@ -13,8 +13,9 @@ DIST_DIR = ROOT / "dist"
 
 GITHUB_REPO = "ZoneCommunity/wiki"
 GITHUB_BRANCH = "main"
-SITE_NAME = "PPTOS Wiki"
+SITE_NAME = "PowerPoint OS Wiki"
 BASE_URL = "https://wiki.pptos.net"
+SITE_HOST = BASE_URL.split("://", 1)[-1].rstrip("/")
 
 
 def slugify(text):
@@ -305,19 +306,28 @@ def link_version(name, lookup):
     return html.escape(name)
 
 
-def render_infobox(fm, lookup):
-    """Infobox from frontmatter. Names that match a page link out."""
-    # Only the keys listed here render in the infobox. Any other
-    # frontmatter key is silently ignored, so adding a field to a
-    # page means adding a row here too. A row only shows when the
-    # page actually sets that key.
+def render_infobox(fm, lookup, creators=None):
+    """Infobox from frontmatter. Names that match a page link out. A developer
+    with a creator page links to it (creators maps developer name -> page url)."""
+    # Only the keys listed here render in the infobox
     rows = [
         ("core", "Core", True),
         ("status", "Status", False),
+        ("preceded_by", "Preceded by", True),
+        ("succeeded_by", "Succeeded by", True),
         ("developer", "Developer", False),
         ("source_model", "Source model", False),
         ("license", "License", False),
+        # Creator fields
+        ("type", "Type", False),
+        ("founded", "Founded", False),
+        ("location", "Location", False),
+        ("first_pptos", "First PPTOS", True),
         ("official_website", "Official website", False),
+        ("youtube", "YouTube", False),
+        ("twitter", "Twitter", False),
+        ("discord", "Discord", False),
+        ("github", "GitHub", False),
         ("initial_development", "Initial development", False),
         ("initial_release", "Initial release", False),
         ("latest_release", "Latest release", False),
@@ -348,9 +358,22 @@ def render_infobox(fm, lookup):
         if key not in fm:
             continue
         value = fm[key]
-        if key == "official_website":
-            url = value if value.startswith(("http://", "https://")) else "https://" + value
+        if key in ("official_website", "youtube", "twitter", "discord", "github"):
+            # A bare handle links to its profile: @Name on YouTube and
+            # Twitter, Name on GitHub. Anything else gets https:// prepended
+            if key == "youtube" and value.startswith("@"):
+                url = "https://www.youtube.com/" + value
+            elif key == "twitter" and value.startswith("@"):
+                url = "https://twitter.com/" + value[1:]
+            elif key == "twitter" and "/" not in value and "." not in value:
+                url = "https://twitter.com/" + value
+            elif key == "github" and "/" not in value and "." not in value:
+                url = "https://github.com/" + value
+            else:
+                url = value if value.startswith(("http://", "https://")) else "https://" + value
             rendered = '<a href="%s">%s</a>' % (html.escape(url, quote=True), html.escape(value))
+        elif key == "developer" and creators and value in creators:
+            rendered = '<a href="%s">%s</a>' % (creators[value], html.escape(value))
         elif is_version:
             rendered = link_version(value, lookup)
         else:
@@ -373,10 +396,12 @@ def render_contents(headings):
 
 
 def page_url(md_path):
-    """content/ZoneOS/Mesolite.md -> /ZoneOS/Mesolite/ ; content/index.md -> /"""
+    """content/ZoneOS/Mesolite.md -> /ZoneOS/Mesolite/ ; content/ZoneOS/index.md -> /ZoneOS/ ; content/index.md -> /"""
     rel = md_path.relative_to(CONTENT_DIR).with_suffix("")
     parts = list(rel.parts)
-    if parts == ["index"]:
+    if parts and parts[-1] == "index":
+        parts = parts[:-1]
+    if not parts:
         return "/"
     return "/" + "/".join(parts) + "/"
 
@@ -384,9 +409,9 @@ def page_url(md_path):
 def breadcrumb(url_path, title):
     """Show the wiki.pptos.net/ZoneOS/<Version> path, with links."""
     if url_path == "/":
-        return "wiki.pptos.net"
+        return SITE_HOST
     parts = [p for p in url_path.strip("/").split("/") if p]
-    crumbs = ['<a href="/">wiki.pptos.net</a>']
+    crumbs = ['<a href="/">%s</a>' % SITE_HOST]
     acc = ""
     for part in parts[:-1]:
         acc += "/" + part
@@ -401,30 +426,39 @@ def collect_pages():
         text = md_path.read_text(encoding="utf-8")
         fm, body = parse_frontmatter(text)
         url = page_url(md_path)
-        title = fm.get("title") or url.strip("/").split("/")[-1].replace("-", " ") or "PPTOS Wiki"
+        title = fm.get("title") or url.strip("/").split("/")[-1].replace("-", " ").replace("_", " ") or SITE_NAME
         pages.append({"path": md_path, "fm": fm, "body": body, "url": url, "title": title})
     return pages
 
 
 def child_pages(page, all_pages):
-    """Subpages: Markdown files in the folder that shares this page's name.
-
-    content/ZoneOS/Mesolite.md has subpages in content/ZoneOS/Mesolite/.
-    content/ZoneOS.md has subpages in content/ZoneOS/ (the version files).
-    """
-    child_dir = page["path"].with_suffix("").parent / page["path"].stem
-    # For a top-level page like ZoneOS.md, the folder is content/ZoneOS/.
+    if page.get("path") is None:
+        return []
+    if page["path"].stem == "index":
+        child_dir = page["path"].parent
+    else:
+        child_dir = page["path"].with_suffix("").parent / page["path"].stem
     if not child_dir.is_dir():
         return []
+    candidates = sorted(child_dir.glob("*.md"))
+    if page["url"] != "/":
+        for sub in sorted(child_dir.iterdir()):
+            if sub.is_dir():
+                idx = sub / "index.md"
+                if idx.is_file():
+                    candidates.append(idx)
+    candidates.sort()
     children = []
-    for child in sorted(child_dir.glob("*.md")):
+    for child in candidates:
+        if child == page["path"]:
+            continue
         match = next((p for p in all_pages if p["path"] == child), None)
         if match:
             children.append(match)
     return children
 
 
-def build_page(page, all_pages, layout, lookup):
+def build_page(page, all_pages, layout, lookup, creators=None):
     fm = page["fm"]
     body_html, headings, plain_text = parse_markdown(page["body"])
 
@@ -439,26 +473,27 @@ def build_page(page, all_pages, layout, lookup):
     description = (fm.get("description") or plain_text[:200]).strip()
     description = re.sub(r"\s+", " ", description)
 
-    rel_md = page["path"].relative_to(ROOT).as_posix()
-    edit_url = "https://github.com/%s/edit/%s/%s" % (GITHUB_REPO, GITHUB_BRANCH, rel_md)
-    history_url = "https://github.com/%s/commits/%s/%s" % (GITHUB_REPO, GITHUB_BRANCH, rel_md)
+    if page.get("path") is not None:
+        rel_md = page["path"].relative_to(ROOT).as_posix()
+        edit_url = "https://github.com/%s/edit/%s/%s" % (GITHUB_REPO, GITHUB_BRANCH, rel_md)
+        history_url = "https://github.com/%s/commits/%s/%s" % (GITHUB_REPO, GITHUB_BRANCH, rel_md)
+    else:
+        # Generated pages have no source file; link at the repo instead.
+        edit_url = "https://github.com/%s" % GITHUB_REPO
+        history_url = "https://github.com/%s/commits/%s" % (GITHUB_REPO, GITHUB_BRANCH)
 
     page_html = layout
     page_html = page_html.replace("{{TITLE}}", html.escape(page["title"]))
+    page_html = page_html.replace("{{SITE_NAME}}", SITE_NAME)
     page_html = page_html.replace("{{DESCRIPTION}}", html.escape(description, quote=True))
     page_html = page_html.replace("{{BREADCRUMB}}", breadcrumb(page["url"], page["title"]))
     page_html = page_html.replace("{{CONTENTS}}", render_contents(headings))
-    page_html = page_html.replace("{{INFOBOX}}", render_infobox(fm, lookup))
+    page_html = page_html.replace("{{INFOBOX}}", render_infobox(fm, lookup, creators))
     page_html = page_html.replace("{{CONTENT}}", body_html)
     page_html = page_html.replace("{{EDIT_URL}}", edit_url)
     page_html = page_html.replace("{{HISTORY_URL}}", history_url)
     page_html = page_html.replace("{{PAGE_PATH}}", page["url"])
-    # The "All versions" tab is per-OS, not ZoneOS-only: any top-level
-    # page (an OS, e.g. ZoneOS, MyOS, Windows) gets one when it has a
-    # Versions page, e.g. content/MyOS/Versions.md -> /MyOS/Versions/.
-    # The homepage never gets the tab. On the Versions page itself,
-    # All versions is the active tab and Article links back to the
-    # OS's main article; on other pages of that OS, Article is active.
+    # The "All versions" tab is per-OS
     parts = [p for p in page["url"].split("/") if p]
     os_slug = parts[0] if parts else ""
     versions_url = "/%s/Versions/" % os_slug if os_slug else ""
@@ -477,24 +512,170 @@ def build_page(page, all_pages, layout, lookup):
     return page_html, plain_text
 
 
+def creator_slug(name):
+    """URL segment for a creator page, Wikipedia-style: spaces become
+    underscores, so "John Doe" is /Creators/John_Doe/. A name that is
+    already URL-safe is kept as-is, so /Creators/Zulo/ keeps its capital Z."""
+    if re.match(r"^[A-Za-z0-9_ -]+$", name):
+        return re.sub(r" +", "_", name)
+    return re.sub(r"[^A-Za-z0-9]+", "_", name).strip("_") or "creator"
+
+
+def creator_url(name):
+    return "/Creators/%s/" % creator_slug(name)
+
+
+def os_pages(pages):
+    """The PPTOS articles: top-level pages below the homepage, e.g. /ZoneOS/."""
+    return [p for p in pages if p["url"] != "/" and p["url"].count("/") == 2]
+
+
+def collect_creators(pages):
+    """Group the OS articles by their developer frontmatter.
+    Returns {developer name: [os pages]}; OSes without a developer are skipped."""
+    creators = {}
+    for page in os_pages(pages):
+        name = page["fm"].get("developer")
+        if name:
+            creators.setdefault(name, []).append(page)
+    return creators
+
+
+def creator_table_lines(name, creators):
+    """The Markdown table of one creator's PPTOSes. Used for generated
+    creator pages and for appending to content creator pages. No Current
+    version column: it squeezed the table too narrow on mobile, and the
+    current version is on the OS page's infobox anyway."""
+    their = sorted(creators[name], key=lambda p: p["title"].lower())
+    lines = ["## PPTOSes", "",
+             "| PPTOS | Description | Status |",
+             "| --- | --- | --- |"]
+    for os_page in their:
+        fm = os_page["fm"]
+        lines.append("| [%s](%s) | %s | %s |" % (
+            os_page["title"], os_page["url"],
+            (fm.get("description", "") or "").replace("|", " / "),
+            (fm.get("status", "") or "").replace("|", " / ")))
+    return lines
+
+
+def attach_creator_tables(pages, creators):
+    """A creator page written as a content file, e.g.
+    content/Creators/ZoneCommunity.md, keeps the author's own words and
+    gets the table of their PPTOSes appended automatically, so the list
+    never goes stale. Pages that already have a ## PPTOSes section are
+    left alone. Creators without a content file get a fully generated
+    page instead (see generated_pages)."""
+    by_slug = {creator_slug(name): name for name in creators}
+    for page in pages:
+        parts = [p for p in page["url"].split("/") if p]
+        if len(parts) != 2 or parts[0] != "Creators":
+            continue
+        name = by_slug.get(parts[1])
+        if not name or "## PPTOSes" in page["body"]:
+            continue
+        page["body"] = (page["body"].rstrip() + "\n\n"
+                         + "\n".join(creator_table_lines(name, creators)) + "\n")
+
+
+def generated_pages(pages, creators):
+    """Synthetic pages built from the collected pages, with no Markdown file:
+    the all-PPTOSes list, the creators index, and one page per creator.
+    They are built like any other page, so they get search entries too.
+    A new OS article shows up automatically once it has a developer.
+    A content file for the same URL wins and no generated page is made."""
+    oss = sorted(os_pages(pages), key=lambda p: p["title"].lower())
+    generated = []
+    # A content file wins
+    existing = {p["url"] for p in pages}
+
+    def add(page):
+        if page["url"] not in existing:
+            generated.append(page)
+
+    def clean(text):
+        return (text or "").replace("|", " / ")
+
+    # All PPTOSes
+    lines = [
+        "The wiki currently documents %d PPTOS%s." % (len(oss), "" if len(oss) == 1 else "es"),
+        "",
+        "## PPTOSes",
+        "",
+        "| PPTOS | Developer | Status |",
+        "| --- | --- | --- |",
+    ]
+    for os_page in oss:
+        fm = os_page["fm"]
+        dev = fm.get("developer", "")
+        dev_cell = "[%s](%s)" % (dev, creator_url(dev)) if dev in creators else clean(dev)
+        lines.append("| [%s](%s) | %s | %s |" % (
+            os_page["title"], os_page["url"], dev_cell,
+            clean(fm.get("status", ""))))
+    add({
+        "path": None,
+        "fm": {"title": "All PPTOSes", "description": "Every PPTOS documented on the wiki."},
+        "body": "\n".join(lines),
+        "url": "/PPTOSes/",
+        "title": "All PPTOSes",
+    })
+
+    # Creators index: one row per creator, including creators who have a
+    # /Creators page but no PPTOSes yet (their row says so).
+    content_creators = {}
+    for p in pages:
+        parts = p["url"].strip("/").split("/")
+        if p["path"] is not None and len(parts) == 2 and parts[0] == "Creators":
+            content_creators[p["fm"].get("title", "") or parts[1]] = p["url"]
+    lines = ["## Creators", "",
+             "| Creator | PPTOSes |",
+             "| --- | --- |"]
+    for name in sorted(set(creators) | set(content_creators), key=str.lower):
+        their = creators.get(name, [])
+        pptos_cell = ", ".join("[%s](%s)" % (p["title"], p["url"])
+                               for p in sorted(their, key=lambda p: p["title"].lower())) if their else "No PPTOSes yet"
+        lines.append("| [%s](%s) | %s |" % (
+            name, content_creators.get(name) or creator_url(name), pptos_cell))
+    add({
+        "path": None,
+        "fm": {"title": "Creators", "description": "Everyone who has made a PPTOS on this wiki."},
+        "body": "\n".join(lines),
+        "url": "/Creators/",
+        "title": "Creators",
+    })
+
+    # One page per creator
+    for name in sorted(creators):
+        lines = ["PPTOSes made by %s." % name, ""] + creator_table_lines(name, creators)
+        add({
+            "path": None,
+            "fm": {"title": name, "description": "PPTOSes made by %s." % name},
+            "body": "\n".join(lines),
+            "url": creator_url(name),
+            "title": name,
+        })
+    return generated
+
+
 def build_404(layout):
     content = (
-        '<p>There is no page at this address on the PPTOS Wiki. '
+        '<p>There is no page at this address on the %s. '
         'It may have been moved, renamed, or mistyped.</p>\n'
         '<p>Try one of these instead:</p>\n'
         '<ul>'
-        '<li><a href="/">PPTOS Wiki</a> - the homepage</li>'
+        '<li><a href="/">%s</a> - the homepage</li>'
         '<li><a href="/ZoneOS/">ZoneOS</a> - the main ZoneOS article</li>'
         '<li><a href="/ZoneOS/Versions/">All versions</a> - every ZoneOS version, in order</li>'
         '</ul>\n'
         '<p>Or use the search box at the top of the page.</p>'
-    )
+    ) % (SITE_NAME, SITE_NAME)
     page_html = layout
     page_html = page_html.replace("{{TITLE}}", "Page not found")
+    page_html = page_html.replace("{{SITE_NAME}}", SITE_NAME)
     page_html = page_html.replace(
-        "{{DESCRIPTION}}", "This page does not exist on the PPTOS Wiki.")
+        "{{DESCRIPTION}}", "This page does not exist on the %s." % SITE_NAME)
     page_html = page_html.replace(
-        "{{BREADCRUMB}}", '<a href="/">wiki.pptos.net</a> / Page not found')
+        "{{BREADCRUMB}}", '<a href="/">%s</a> / Page not found' % SITE_HOST)
     page_html = page_html.replace("{{CONTENTS}}", "")
     page_html = page_html.replace("{{INFOBOX}}", "")
     page_html = page_html.replace("{{CONTENT}}", content)
@@ -515,6 +696,11 @@ def main():
     if not pages:
         raise SystemExit("No Markdown files found under content/")
     lookup = build_page_lookup(pages)
+    # The list and creator pages are generated from the collected pages
+    creators = collect_creators(pages)
+    creator_urls = {name: creator_url(name) for name in creators}
+    attach_creator_tables(pages, creators)
+    pages += generated_pages(pages, creators)
 
     if DIST_DIR.exists():
         shutil.rmtree(DIST_DIR)
@@ -522,7 +708,7 @@ def main():
 
     search_index = []
     for page in pages:
-        page_html, plain_text = build_page(page, pages, layout, lookup)
+        page_html, plain_text = build_page(page, pages, layout, lookup, creator_urls)
         if page["url"] == "/":
             out_path = DIST_DIR / "index.html"
         else:
@@ -534,7 +720,8 @@ def main():
             "path": page["url"],
             "text": re.sub(r"\s+", " ", plain_text)[:3000],
         })
-        print("built %s -> %s" % (page["path"].relative_to(ROOT), out_path.relative_to(DIST_DIR)))
+        src = page["path"].relative_to(ROOT) if page.get("path") else "(generated)"
+        print("built %s -> %s" % (src, out_path.relative_to(DIST_DIR)))
 
     (DIST_DIR / "search.json").write_text(
         json.dumps(search_index, indent=2, ensure_ascii=False), encoding="utf-8")
