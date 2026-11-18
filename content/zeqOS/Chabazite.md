@@ -16,7 +16,7 @@ image_captions: The zeqOS Chabazite desktop
 
 ## Overview
 
-Chabazite started as [zeqOS Rhodonite](/zeqOS/Rhodonite/), a version that was cancelled. In late 2020, development was reset to a new core called Zento (the previous core was NT).
+Chabazite started as [zeqOS Rhodonite](/zeqOS/Rhodonite/), a version that was canceled. In late 2020, development was reset to a new core called Zento (the previous core was NT).
 
 Chabazite was released on July 17, 2021.
 
@@ -30,11 +30,11 @@ Chabazite was the first version of zeqOS to introduce ZCS, the zeqOS Coding Stru
 
 ## Development cycle
 
-Chabazite began development as Rhodonite. After Rhodonite was cancelled, development was reset to the new Zento core in late 2020. Beta builds from late 2020, shortly after the reset, still carried the old codename, labelled "zeqOS Codename Rhodonite", while others were labelled "zeqOS Confidential Concept Build X".
+Chabazite began development as Rhodonite. After Rhodonite was cancelled, development was reset to the new Zento core in late 2020. Beta builds from late 2020, shortly after the reset, still carried the old codename, labeled "zeqOS Codename Rhodonite", while others were labeled "zeqOS Confidential Concept Build X".
 
-![The beta desktop, labelled zeqOS Confidential Concept Build X](/assets/zeqOS/Chabazite/Beta/Desktop.png)
+![The beta desktop, labeled zeqOS Confidential Concept Build X](/assets/zeqOS/Chabazite/Beta/Desktop.png)
 
-![A beta build with apps open, still labelled zeqOS Codename Rhodonite](/assets/zeqOS/Chabazite/Beta/DesktopWithApps.png)
+![A beta build with apps open, still labeled zeqOS Codename Rhodonite](/assets/zeqOS/Chabazite/Beta/DesktopWithApps.png)
 
 ![A teaser image for the beta](/assets/zeqOS/Chabazite/Beta/Teaser.png)
 

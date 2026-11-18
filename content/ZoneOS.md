@@ -66,7 +66,7 @@ ratio support.
 | --- | --- | --- |
 | Culebra | - | Unknown |
 | Malachite | - | Early experiment |
-| Malachite | Zore | Cancelled |
+| Malachite | Zore | Canceled |
 | Tanzanite | ZMC | Scrapped |
 | Tanzanite | Zore | Early experiment |
 | Plexorite | - | Various experiments |

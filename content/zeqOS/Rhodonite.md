@@ -1,6 +1,6 @@
 ---
 title: zeqOS Rhodonite
-description: A cancelled version of zeqOS, reset into Chabazite.
+description: A canceled version of zeqOS, reset into Chabazite.
 core: NT
 image: /assets/zeqOS/Rhodonite/Desktop.png
 image_captions: The zeqOS Rhodonite desktop
@@ -8,7 +8,7 @@ image_captions: The zeqOS Rhodonite desktop
 
 # zeqOS Rhodonite
 
-**zeqOS Rhodonite** was a version of zeqOS that was cancelled. In late 2020, its development was reset to a new core called Zento, and it became [zeqOS Chabazite](/zeqOS/Chabazite/).
+**zeqOS Rhodonite** was a version of zeqOS that was canceled. In late 2020, its development was reset to a new core called Zento, and it became [zeqOS Chabazite](/zeqOS/Chabazite/).
 
 ## Overview
 

@@ -2,7 +2,7 @@
 title: Levynite
 core: ZoneCore
 initial_development: May 2025
-status: Cancelled, merged into ZoneOS+
+status: Canceled, merged into ZoneOS+
 developer: ZoneCommunity
 description: Levynite branched off Mesolite as a simplified release version, gained complex experimental features, got buggy, and merged into ZoneOS+.
 ---

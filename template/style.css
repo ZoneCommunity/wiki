@@ -12,9 +12,7 @@
   --article-width: 960px;
   --font-size: 16px;
 }
-/* Text size has to set font-size on body directly: --font-size is read
-   by html, and a variable set on body (html's child) can never flow
-   back up to html, so the old --font-size override here did nothing. */
+/* Text size sets font-size on body directly */
 body[data-text-size="small"] { font-size: 14px; }
 body[data-text-size="large"] { font-size: 18px; }
 body[data-width="wide"] { --article-width: 1200px; }
@@ -66,9 +64,7 @@ img { max-width: 100%; height: auto; }
 .wordmark { display: flex; align-items: center; flex: none; }
 .wordmark:hover { text-decoration: none; }
 .wordmark-logo { height: 36px; width: auto; display: block; }
-/* dark.svg is the black logo, for light backgrounds; light.svg is
-   the white logo, for dark backgrounds. Which one shows follows
-   the Color setting, and the OS under Automatic. */
+/* dark.svg is the light mode logo, light.svg is the dark mode logo */
 .logo-light { display: none; }
 body[data-color="dark"] .logo-dark { display: none; }
 body[data-color="dark"] .logo-light { display: block; }
@@ -84,11 +80,7 @@ body[data-color="dark"] .logo-light { display: block; }
 .search-results a:hover { background: var(--panel); text-decoration: none; }
 .search-results .result-path { color: var(--muted); font-size: 13px; }
 
-/* Three-column page, article centred. The max-width is derived
-   from the article width, so the three tracks (200px + article +
-   200px, plus gaps and padding) can never add up wider than the
-   page itself - with Width: Wide the old fixed 1500px cap was
-   narrower than the tracks, and the grid spilled over both sides. */
+/* Three-column page with article centered */
 .page { display: grid; grid-template-columns: 200px minmax(0, var(--article-width)) 200px; justify-content: center; gap: 32px; max-width: calc(var(--article-width) + 504px); margin: 0 auto; padding: 24px 20px 60px; }
 .contents-col, .appearance-col { font-size: 14px; }
 .contents-box, .appearance-box { position: sticky; top: 70px; }
@@ -100,10 +92,7 @@ body[data-color="dark"] .logo-light { display: block; }
 .appearance-group { border-bottom: 1px solid var(--border-light); padding: 10px 0; }
 .appearance-group h3 { margin: 0 0 6px; font-size: 14px; }
 .appearance-group label { display: flex; align-items: center; gap: 8px; margin: 6px 0; cursor: pointer; }
-/* Custom radios: the native ones render bright white in dark mode.
-   The input itself is the circle, drawn from the theme variables,
-   so checked and unchecked both stay muted in light and dark. The
-   input names/values are unchanged, so the JS handlers still work. */
+/* Radio buttons */
 .appearance-group input[type="radio"] {
   -webkit-appearance: none;
   appearance: none;
@@ -150,27 +139,18 @@ body[data-color="dark"] .logo-light { display: block; }
 .article-body table { border-collapse: collapse; margin: 12px 0 18px; width: 100%; font-size: 14px; }
 .article-body th, .article-body td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
 .article-body th { background: var(--panel); }
-/* Figures float on the right like Wikipedia thumbs, with the text
-   wrapping around them, instead of sitting full-width in the flow. */
+/* Figures float on the right */
 .article-body figure { float: right; clear: right; width: 300px; max-width: 100%; margin: 0 0 16px 20px; border: 1px solid var(--border); background: var(--panel); padding: 6px; }
 .article-body figure img { cursor: zoom-in; display: block; max-width: 100%; height: auto; }
 .article-body figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; padding: 0 2px 2px; }
-/* A section holding figures grows to contain them, so the pictures
-   sit inside their own section on the right instead of spilling
-   down beside the next section. Only sections with figures get
-   this, the rest keep flowing beside the infobox. */
 .article-body section:has(figure)::after { content: ""; display: block; clear: both; }
-/* Rows: consecutive figures, or a code block beside a figure, sit
-   side by side instead of stacking. */
+/* Rows */
 .article-body .figure-row, .article-body .media-row { display: flex; gap: 16px; align-items: flex-start; margin: 0 0 16px; }
 .article-body .figure-row figure, .article-body .media-row figure { float: none; width: auto; flex: 1 1 0; min-width: 0; margin: 0; }
 .article-body .media-row pre { flex: 1 1 0; min-width: 0; margin: 0; }
 .article-body figure video { width: 100%; display: block; background: #000; }
 
-/* Infobox. The selector must beat `.article-body table` (width: 100%),
-   which otherwise wins on specificity and stretches the infobox to
-   the full article width, with the image huge and centred - the
-   "big image" bug. A plain `.infobox` selector loses to it. */
+/* Infobox */
 .article-body table.infobox { float: right; clear: right; width: 300px; max-width: 100%; margin: 0 0 16px 20px; border: 1px solid var(--border); background: var(--panel); font-size: 14px; }
 .infobox caption, .infobox-title { font-weight: bold; font-size: 17px; padding: 8px 10px; text-align: center; border-bottom: 1px solid var(--border-light); }
 .infobox th, .infobox td { border: none; padding: 5px 10px; vertical-align: top; }
@@ -183,7 +163,6 @@ body[data-color="dark"] .logo-light { display: block; }
 .article-foot { border-top: 1px solid var(--border-light); margin-top: 32px; padding-top: 12px; color: var(--muted); font-size: 13px; }
 
 /* Media viewer */
-/* See-through on purpose: the page shows dimly behind the image. */
 .media-viewer { position: fixed; inset: 0; background: rgba(0,0,0,.92); z-index: 100; display: flex; align-items: center; justify-content: center; }
 .media-viewer[hidden] { display: none; }
 .viewer-figure { max-width: 90vw; max-height: 90vh; margin: 0; text-align: center; }
@@ -201,55 +180,30 @@ body[data-color="dark"] .logo-light { display: block; }
 .version-card h3 { margin: 0 0 4px; }
 
 @media (max-width: 1100px) {
-  /* One column that fills the container exactly. The old
-     minmax(0, var(--article-width)) capped the track at an
-     absolute 960/1200px instead of the viewport, which could
-     leave the grid wider than the window. */
+  /* One column that fills the container */
   .page { grid-template-columns: minmax(0, 1fr); }
   .contents-col, .appearance-col { display: none; }
   .menu-btn, .appearance-btn { display: inline-block; }
-  /* The toggled Contents is a panel above the article, not an
-     unstyled box inside the article flow. */
-  /* The toggled panels float over the page, they are not stuck at
-     the top of it: opening one while scrolled down still shows it,
-     just under the topbar, instead of sitting above the article
-     where you cannot see it. Fixed, not sticky: sticky only works
-     for Contents, which sits first in the page; Appearance sits
-     after the article, so sticky would leave it below the article
-     until you scroll to the bottom. */
+  /* Toggled panels float over the page */
   body.show-contents .contents-col { display: block; position: fixed; top: 70px; left: 16px; right: 16px; z-index: 30; max-height: calc(100vh - 90px); overflow-y: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 12px 16px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
   body.show-contents .contents-box { position: static; }
-  /* Same floating treatment for Appearance. */
   body.show-appearance .appearance-col { display: block; position: fixed; top: 70px; left: 16px; right: 16px; z-index: 30; max-height: calc(100vh - 90px); overflow-y: auto; background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 12px 16px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
   body.show-appearance .appearance-box { position: static; }
 }
 @media (max-width: 640px) {
   .article-title { font-size: 26px; }
-  /* Same specificity trap as the desktop infobox rule: a plain
-     .infobox loses to .article-body table.infobox, so the float
-     survived on mobile and the lead text squeezed into a narrow
-     column beside it. On mobile the infobox is full width. */
   .article-body table.infobox { float: none; width: 100%; margin: 0 0 16px; }
-  /* Figures un-float on mobile: a 300px float would squeeze the
-     text into a narrow column, so they go full width again. */
+  /* Figures un-float on mobile */
   .article-body figure { float: none; width: 100%; margin: 12px 0 18px; }
-  /* Rows stack vertically on mobile, so each figure and code block
-     gets the full width again. */
+  /* Rows stack vertically on mobile */
   .article-body .figure-row, .article-body .media-row { flex-direction: column; }
   .article-body .figure-row figure, .article-body .media-row figure, .article-body .media-row pre { flex: none; width: 100%; }
-  /* Below 640px the topbar wraps to two rows, so the floating
-     panels sit lower to clear the search row. */
   body.show-contents .contents-col, body.show-appearance .appearance-col { top: 120px; max-height: calc(100vh - 140px); }
-  /* Image viewer on mobile: the image uses the full width instead
-     of a small 90vw box, and the close / prev / next buttons shrink
-     so they do not crowd it. The shadow keeps them readable where
-     they sit on top of the image. */
+  /* Image viewer on mobile */
   .viewer-figure { max-width: 100vw; }
   .viewer-figure img { max-width: 100vw; max-height: 82vh; }
   .viewer-close { top: 8px; right: 12px; font-size: 32px; text-shadow: 0 0 8px rgba(0,0,0,.8); }
-  /* The arrows sit below the image, not over it: pinned to the
-     bottom corners of the screen. The transform is reset because
-     the desktop rule centres them vertically with translateY. */
+  /* Arrows sit below the image */
   .viewer-nav { top: auto; bottom: 20px; transform: none; font-size: 36px; padding: 8px; text-shadow: 0 0 8px rgba(0,0,0,.8); }
   .viewer-prev { left: 20px; }
   .viewer-next { right: 20px; }

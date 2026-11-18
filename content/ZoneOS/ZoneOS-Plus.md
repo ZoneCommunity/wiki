@@ -1,7 +1,7 @@
 ---
 title: ZoneOS+
 core: ZoneCore
-status: Cancelled, rebranded into Mesolite
+status: Canceled, rebranded into Mesolite
 developer: ZoneCommunity
 description: ZoneOS+ is the merger of Mesolite and Levynite.
 ---
