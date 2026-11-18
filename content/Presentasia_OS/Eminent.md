@@ -3,6 +3,8 @@ title: Eminent
 developer: Presentasia Technologies
 status: Canceled
 description: Eminent was a canceled project by Presentasia Technologies, whose features were moved to Presentasia OS 9 Pavilion.
+image: /assets/Presentasia_OS/Eminent/Login.png
+image_captions: The Eminent login screen
 ---
 
 # Eminent
